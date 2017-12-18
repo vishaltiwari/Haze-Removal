@@ -1,37 +1,34 @@
-## Welcome to GitHub Pages
+## About
 
-You can use the [editor on GitHub](https://github.com/vishaltiwari/Haze-Removal/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+Most of the remote sensing data, have a lot of unclear data. This is because of the presence of haze and clouds. Due to the presence of haze, it can’t be directly used for other application or analysis purpose. We know that low wavelength waves get more scattered by atmosphere, due to its interaction with the atmospheric interaction. This can be explained using Mie theory.
+A lot of research has been put in the development of such an algorithm. Previous work are mainly of two types. First one is spectral filtering and Spectral Analysis. Some examples of spectral filtering are FFT (Fast fourier Transform) and Wavelet removal. Some examples of spectral Analysis algorithms are Cluster Matching and Tasselled Cap Transform[1,2]. Haze optimization Transform is also a kind of spectral analysis algorithm. 
+The data that will be used during this project is LANDSAT data. We will also be using LANDSAT temporal data, for the implementation of histogram matching.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+## Haze Optimization Transform
 
-### Markdown
+Haze optimization Transform, first makes a scatter plot between two bands, and finds a best fitting line, that passes through those points. This algorithm uses the property that in the non-hazly image the correlation between the bands will be high, and low in hazly images.
+After finding the best fitting line, called the Clear Line(CL), a HOT image is calculated using the following[3,4] :
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+`Hotvalue = DN1sin(theta) - DN2cos(theta)`
 
-```markdown
-Syntax highlighted code block
+Where DN1is the DN value of a pixel in band 1 and DN2is the pixel value in band 2.
+Now we use this obtained HOT image to remove the haze from the visible bands. We will plot histograms of DN values vs number of pixel corresponding to that DN value of a band, for some HOT values, that we have calculated from the above step.
+After this we make a plot between, HOT value and Min DN value of histograms, and see that, lower the HOT value, clearer the image. Thus we now take the difference in the min_DN values between two HOT values, and subtract that value from corresponding DN values in the input image. We will do that for all the HOT values . After this operation we will get a haze free image.
 
-# Header 1
-## Header 2
-### Header 3
 
-- Bulleted
-- List
+## Area Selection
+A sliding window on the input image calculates the average HOT value of the window and used the window region with the minimal average HOT value. 
 
-1. Numbered
-2. List
+## References
 
-**Bold** and _Italic_ and `Code` text
+[1] R. Richter, “A spatially adaptive fast atmospheric correction algorithm,” International Journal of Remote Sensing, vol. 17, no. 6, pp.1201-1214, Apr, 1996.-R. Richter, “Atmospheric correction of satellite data with haze
 
-[Link](url) and ![Image](src)
-```
+[2]removal including a haze/clear transition region,” Computers & Geosciences, vol. 22, no. 6, pp. 675-681, Jul, 1996.
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+[3] “An Image Transform to Characterize and Compensate for Spatial Variations in Thin Cloud Contamination of Landsat Images”-Y. Zhang1, 2, B. Guindon1 and J. Cihlar1
 
-### Jekyll Themes
+[4] “A haze removal module for multispectral satellite imagery”-Jianbo Hua,b, Wei Chena, Xiaoyu Lia ,Xingyuan Hea,*
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/vishaltiwari/Haze-Removal/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+[5] “Unbiased histogram matching quality measure for optimal radiometric normalization”-Zhengwei Yang, Rick Mueller
 
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+[6] “Haze detection and removal in high resolution satellite image with wavelet analysis,”-Y. Du, B. Guindon, and J. Cihlar
